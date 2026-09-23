@@ -111,7 +111,6 @@ function Navbar({ view, nav, user, isAdmin, setAuthOpen, setAuthMode, logout, mo
         <button onClick={() => nav('home')} className="flex items-center gap-2 group">
           <div className="relative">
             <img src="/logo-dkv.webp" alt="DCEN DKV" className="w-10 h-10 object-contain" />
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse ring-2 ring-[#05050a]" />
           </div>
           <div className="leading-none">
             <span className="font-black tracking-tight text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">DCEN</span>
