@@ -5,6 +5,7 @@ export const metadata = {
   title: 'DCEN DKV — Live Streaming & Rental Multimedia Profesional',
   description: 'DCEN DKV: Platform jasa live streaming multi-kamera, rental alat multimedia, dan produksi video profesional. Booking cepat, harga transparan, kualitas broadcast.',
   keywords: 'live streaming, rental kamera, multimedia, produksi video, streaming event, jakarta, indonesia',
+  icons: { icon: '/logo-dkv.webp', shortcut: '/logo-dkv.webp', apple: '/logo-dkv.webp' },
   openGraph: {
     title: 'DCEN DKV — Live Streaming & Rental Multimedia',
     description: 'Jasa live streaming multi-kamera & rental alat multimedia profesional.',

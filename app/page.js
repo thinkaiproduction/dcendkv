@@ -110,9 +110,7 @@ function Navbar({ view, nav, user, isAdmin, setAuthOpen, setAuthMode, logout, mo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <button onClick={() => nav('home')} className="flex items-center gap-2 group">
           <div className="relative">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
-              <Radio className="w-5 h-5 text-white" />
-            </div>
+            <img src="/logo-dkv.webp" alt="DCEN DKV" className="w-10 h-10 object-contain" />
             <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse ring-2 ring-[#05050a]" />
           </div>
           <div className="leading-none">
@@ -1071,7 +1069,7 @@ function Footer({ nav }) {
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center"><Radio className="w-5 h-5" /></div>
+              <img src="/logo-dkv.webp" alt="DCEN DKV" className="w-9 h-9 object-contain" />
               <span className="font-black text-lg">DCEN <span className="text-violet-400">DKV</span></span>
             </div>
             <p className="text-sm text-slate-500">Platform jasa live streaming & rental alat multimedia profesional untuk setiap event Anda.</p>
