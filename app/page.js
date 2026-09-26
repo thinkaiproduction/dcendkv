@@ -6,7 +6,7 @@ import {
   Radio, Camera, Video, Sparkles, Menu, X, Phone, MessageCircle, Star,
   Calendar, MapPin, Users, MonitorPlay, Zap, ShieldCheck, ArrowRight,
   LayoutDashboard, Package, UserCog, LogOut, Plus, Trash2, CheckCircle2,
-  Clock, TrendingUp, Wallet, Boxes, PlayCircle, ChevronRight, Loader2,
+  Clock, TrendingUp, Wallet, Boxes, PlayCircle, ChevronRight, Loader2, Pencil,
 } from 'lucide-react'
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar,
@@ -971,13 +971,20 @@ function AdminRentals({ token }) {
 function AdminEquipment({ token }) {
   const [equipment, setEquipment] = useState([])
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ name: '', category: 'Kamera Profesional', spec: '', pricePerDay: '', stock: 1, image: '' })
+  const [editId, setEditId] = useState(null)
+  const empty = { name: '', category: 'Kamera Profesional', spec: '', pricePerDay: '', stock: 1, image: '' }
+  const [form, setForm] = useState(empty)
   const load = useCallback(() => { api('/equipment').then((d) => setEquipment(d.equipment || [])).catch(() => {}) }, [])
   useEffect(() => { load() }, [load])
-  const add = async (e) => {
+  const save = async (e) => {
     e.preventDefault()
-    try { await api('/equipment', { method: 'POST', body: form, token }); setShowForm(false); setForm({ name: '', category: 'Kamera Profesional', spec: '', pricePerDay: '', stock: 1, image: '' }); load(); toast('Alat ditambahkan') } catch (e) { toast(e.message, 'error') }
+    try {
+      if (editId) { await api('/equipment/' + editId, { method: 'PUT', body: form, token }); toast('Alat diperbarui') }
+      else { await api('/equipment', { method: 'POST', body: form, token }); toast('Alat ditambahkan') }
+      setShowForm(false); setEditId(null); setForm(empty); load()
+    } catch (e) { toast(e.message, 'error') }
   }
+  const startEdit = (it) => { setForm({ name: it.name, category: it.category, spec: it.spec || '', pricePerDay: it.pricePerDay, stock: it.stock, image: it.image || '' }); setEditId(it.id); setShowForm(true); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const del = async (id) => { try { await api('/equipment/' + id, { method: 'DELETE', token }); load(); toast('Alat dihapus') } catch (e) { toast(e.message, 'error') } }
   const toggle = async (it) => { try { await api('/equipment/' + it.id, { method: 'PUT', body: { available: !it.available }, token }); load() } catch (e) { toast(e.message, 'error') } }
   const cats = ['Kamera Profesional', 'Kamera PTZ', 'Video Switcher', 'Capture Card', 'Tripod', 'Lighting', 'Microphone', 'Audio Mixer', 'Speaker', 'LED Screen', 'Laptop Streaming', 'Encoder', 'Kabel & Aksesoris']
@@ -985,19 +992,23 @@ function AdminEquipment({ token }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-bold text-lg">Manajemen Alat ({equipment.length})</h3>
-        <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 font-semibold text-sm flex items-center gap-2"><Plus className="w-4 h-4" /> Tambah Alat</button>
+        <button onClick={() => { if (showForm) { setShowForm(false); setEditId(null); setForm(empty) } else { setEditId(null); setForm(empty); setShowForm(true) } }} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 font-semibold text-sm flex items-center gap-2"><Plus className="w-4 h-4" /> Tambah Alat</button>
       </div>
       <AnimatePresence>
         {showForm && (
-          <motion.form initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} onSubmit={add} className="overflow-hidden mb-5">
+          <motion.form initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} onSubmit={save} className="overflow-hidden mb-5">
             <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 grid sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2 font-semibold text-sm text-slate-300">{editId ? 'Edit Alat' : 'Tambah Alat Baru'}</div>
               <Field label="Nama Alat"><input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></Field>
               <Field label="Kategori"><select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputCls}>{cats.map((c) => <option key={c} className="bg-[#12121c]">{c}</option>)}</select></Field>
               <div className="sm:col-span-2"><Field label="Spesifikasi"><input value={form.spec} onChange={(e) => setForm({ ...form, spec: e.target.value })} className={inputCls} /></Field></div>
               <Field label="Harga / hari"><input required type="number" value={form.pricePerDay} onChange={(e) => setForm({ ...form, pricePerDay: e.target.value })} className={inputCls} /></Field>
               <Field label="Stok"><input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className={inputCls} /></Field>
               <div className="sm:col-span-2"><Field label="URL Foto"><input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} className={inputCls} placeholder="https://..." /></Field></div>
-              <button className="sm:col-span-2 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 font-semibold">Simpan Alat</button>
+              <div className="sm:col-span-2 flex gap-3">
+                <button className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 font-semibold">{editId ? 'Update Alat' : 'Simpan Alat'}</button>
+                <button type="button" onClick={() => { setShowForm(false); setEditId(null); setForm(empty) }} className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 font-semibold">Batal</button>
+              </div>
             </div>
           </motion.form>
         )}
@@ -1016,6 +1027,7 @@ function AdminEquipment({ token }) {
             </div>
             <div className="flex border-t border-white/10">
               <button onClick={() => toggle(e)} className={`flex-1 py-2.5 text-xs font-medium ${e.available ? 'text-green-400' : 'text-red-400'}`}>{e.available ? 'Tersedia' : 'Disewa'}</button>
+              <button onClick={() => startEdit(e)} className="px-4 py-2.5 text-blue-300 border-l border-white/10 hover:bg-blue-500/10"><Pencil className="w-4 h-4" /></button>
               <button onClick={() => del(e.id)} className="px-4 py-2.5 text-red-400 border-l border-white/10 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /></button>
             </div>
           </div>
